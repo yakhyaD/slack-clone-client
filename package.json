@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.7",
+    "apollo-link-token-refresh": "^0.3.3",
     "graphql": "^16.2.0",
+    "jwt-decode": "^3.1.2",
     "next": "12.0.8",
     "next-apollo": "^5.0.8",
     "react": "17.0.2",

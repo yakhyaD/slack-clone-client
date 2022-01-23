@@ -1,0 +1,12 @@
+mutation Register($options: AuthCredentials!) {
+    register(options: $options) {
+    errors {
+      field
+      message
+    }
+    user {
+      ...UserInfos
+    }
+    access_token
+  }
+}

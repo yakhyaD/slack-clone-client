@@ -1,0 +1,4 @@
+fragment ErrorInfos on ErrorField{
+    field
+    message
+}

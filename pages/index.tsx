@@ -11,12 +11,12 @@ const Home: NextPage = () => {
     return <p>Loading...</p>;
   }
 
-  if (error) return <p>Error :{error}</p>;
+  if (error) return <pre>Error : {JSON.stringify(error)}</pre>;
 
   return (
     <h1>
       Home page
-      <pre>{data.me}</pre>
+      <pre>{JSON.stringify(data.me)}</pre>
     </h1>
   )
 }
