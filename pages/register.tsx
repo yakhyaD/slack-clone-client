@@ -5,7 +5,6 @@ import { setJwtToken } from '../lib/auth';
 import { ToErrorMap } from '../lib/toErrorMap';
 import { withApollo } from '../lib/withApollo';
 import { useRouter } from "next/router"
-import Spinner from '../components/spinner';
 
 
 const Login: React.FC = () => {
@@ -40,7 +39,7 @@ const Login: React.FC = () => {
             if (response.data.register.user) {
                 // register successful
                 setJwtToken(response.data.register.access_token);
-                await router.push("/");
+                await router.push("/login");
             }
         } catch (e) {
             console.log(e)
@@ -58,16 +57,14 @@ const Login: React.FC = () => {
                 <InputField label="Password" type="password" value={password} setValue={setPassword} error={error}
                 />
 
-                <div className="flex flex-col justify-start">
-                    {loading ? <Spinner width={4} height={4} /> : (
-                        <button className="bg-blue-500 w-50 mx-auto py-2 px-4 text-white text-xs rounded-sm   hover:bg-blue-400"
-                            type="submit"
-                            disabled={loading}
-                        >
-                            Register
-                        </button>
-                    )
-                    }
+                <div className="flex flex-col justify-start relative">
+                    <button className="bg-blue-500 w-1/4 mx-auto py-4 px-4 text-center text-white text-sm hover:bg-blue-400 flex justify-center rounded-xl"
+                        type="submit"
+                        disabled={loading}
+                    >
+                        Sign in
+                        {loading && <svg className="animate-spin h-5 w-5 ml-3 text-white border-4 rounded-full" viewBox="0 0 24 24"></svg>}
+                    </button>
                     <span className="mt-2">
                         Already have account?
                         <a className="text-blue-600 hover:underline" href="forgot-password">
