@@ -22,7 +22,7 @@ const operationIsSubscription = (operation: Operation): boolean => {
 let wsLink
 const getOrCreateWebsocketLink = () => {
     wsLink ??= new WebSocketLink({
-        uri: process.env.NEXT_PUBLIC_API_URL.replace("http", "ws").replace("https", "wss"),
+        uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`.replace("http", "ws").replace("https", "wss"),
         options: {
             reconnect: true,
             timeout: 30000,
@@ -35,7 +35,7 @@ const getOrCreateWebsocketLink = () => {
 }
 const createLink = () => {
     const httpLink = new HttpLink({
-        uri: "http://localhost:8000/graphql", //process.env.NEXT_PUBLIC_API_URL,
+        uri: process.env.NEXT_PUBLIC_API_URL + "/graphql",
         credentials: "include"
     })
 
@@ -67,7 +67,13 @@ const createLink = () => {
 
 export const createClient = new ApolloClient({
     link: createLink(),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+        typePolicies: {
+            Teams: {
+                keyFields: []
+            }
+        }
+    })
 });
 
 export const withApollo = createWithApollo(createClient);

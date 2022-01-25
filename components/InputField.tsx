@@ -18,10 +18,10 @@ const InputField: React.FC<InputFieldProps> = ({ label, type, value, setValue, e
       </label>
       <input
         value={value} onChange={(e) => setValue(e.target.value)}
-        className="w-full border-2 border-gray-400 p-2 rounded-lg outline-none"
+        className="w-full border-2 border-gray p-2 rounded-lg outline-none"
         id={label} type={type} placeholder={label} required={required}
       />
-      {error[errorType] ? <p className="text-red-500 text-sm text-left mt-1">{error[errorType]}</p> : null}
+      {error[errorType] ? <p className="text-red text-sm text-left mt-1">{error[errorType]}</p> : null}
     </div>
   );
 }

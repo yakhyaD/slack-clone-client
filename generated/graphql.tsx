@@ -147,9 +147,9 @@ export type Query = {
   __typename?: 'Query';
   getChannel: Channel;
   getMembers: Array<Member>;
-  getTeam: Team;
-  getTeams: TeamResponse;
   me: Scalars['String'];
+  team: Team;
+  teams: TeamResponse;
 };
 
 
@@ -158,7 +158,7 @@ export type QueryGetChannelArgs = {
 };
 
 
-export type QueryGetTeamArgs = {
+export type QueryTeamArgs = {
   teamId: Scalars['Float'];
 };
 
@@ -218,6 +218,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: string };
+
+export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TeamsQuery = { __typename?: 'Query', teams: { __typename?: 'TeamResponse', teamsOwned?: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number }> | null | undefined, teamsInvited?: Array<{ __typename?: 'Member', team?: { __typename?: 'Team', id: number, name: string, ownerId: number } | null | undefined }> | null | undefined } };
 
 export const ErrorInfosFragmentDoc = gql`
     fragment ErrorInfos on ErrorField {
@@ -345,3 +350,48 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const TeamsDocument = gql`
+    query Teams {
+  teams {
+    teamsOwned {
+      id
+      name
+      ownerId
+    }
+    teamsInvited {
+      team {
+        id
+        name
+        ownerId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTeamsQuery__
+ *
+ * To run a query within a React component, call `useTeamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTeamsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTeamsQuery(baseOptions?: Apollo.QueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
+      }
+export function useTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TeamsQuery, TeamsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options);
+        }
+export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>;
+export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>;
+export type TeamsQueryResult = Apollo.QueryResult<TeamsQuery, TeamsQueryVariables>;

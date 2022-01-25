@@ -56,7 +56,7 @@ const Login: React.FC = () => {
         <InputField required={true} label="Password" type="password" value={password} setValue={setPassword} error={error}
         />
         <div className="flex flex-col justify-start">
-          <button className="bg-blue-500 w-1/4 mx-auto py-2 px-4 text-center text-white text-xlhover:bg-blue-400 hover:cursor-pointer flex justify-center rounded-xl"
+          <button className="bg-lighblue w-1/4 mx-auto py-2 px-4 text-center text-white text-xlhover:bg-blue hover:cursor-pointer flex justify-center rounded-xl"
             type="submit"
             disabled={loading}
           >
