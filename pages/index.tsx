@@ -26,7 +26,6 @@ const Home: NextPage = () => {
 
   if (data.teams.teamsInvited.length < 1 && data.teams.teamsOwned.length < 1) {
     router.push('/create-team');
-    return
   }
 
   return (

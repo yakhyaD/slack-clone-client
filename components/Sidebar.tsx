@@ -16,7 +16,7 @@ export const Sidebar = ({ teams }) => {
                         </div>
                     </Link>
                 ))}
-                <Link href="#" passHref>
+                <Link href="/create-team" passHref>
                     <div className="w-[50px] h-[50px] bg-secondary mx-auto   mb-5 rounded-xl border-2 border-white text-white text-2xl text-center flex justify-center align-center hover:cursor-pointer">
                         <span className="my-auto">+</span>
                     </div>
