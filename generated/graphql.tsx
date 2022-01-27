@@ -148,7 +148,7 @@ export type Query = {
   __typename?: 'Query';
   getChannel: Channel;
   getMembers: Array<Member>;
-  me: Scalars['String'];
+  me?: Maybe<User>;
   team: Team;
   teams: TeamResponse;
 };
@@ -171,6 +171,7 @@ export type Team = {
   name: Scalars['String'];
   ownerId: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
+  users?: Maybe<Array<User>>;
 };
 
 export type TeamResponse = {
@@ -225,7 +226,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: string };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined };
 
 export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -359,9 +360,11 @@ export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
 export const MeDocument = gql`
     query Me {
-  me
+  me {
+    ...UserInfos
+  }
 }
-    `;
+    ${UserInfosFragmentDoc}`;
 
 /**
  * __useMeQuery__
