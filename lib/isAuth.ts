@@ -5,7 +5,7 @@ import { getJwtToken } from "./auth";
 
 export const IsAuth = () => {
     const router = useRouter();
-    const token = getJwtToken();
+    const token = typeof window === "undefined" ? "" : getJwtToken();
 
     useEffect(() => {
         if (!token) {

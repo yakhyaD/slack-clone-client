@@ -4,8 +4,12 @@ import InputField from '../components/InputField';
 import { useCreateTeamMutation } from '../generated/graphql';
 import { useRouter } from 'next/router';
 import { withApollo } from '../lib/withApollo';
+import { IsAuth } from '../lib/isAuth';
 
 const CreateTeam: NextPage = () => {
+
+    IsAuth();
+
     const [name, setName] = useState<string>("");
     const [error, setError] = useState({});
     const [loading, setLoading] = useState(false);
