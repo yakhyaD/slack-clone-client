@@ -8,7 +8,7 @@ import { getJwtToken } from "./auth";
 
 const getHeaders = () => {
     const headers = {} as HeadersInit
-    const token = getJwtToken()
+    const token = getJwtToken();
     if (token) headers["Authorization"] = `Bearer ${token}`
     return headers
 }
@@ -67,13 +67,7 @@ const createLink = () => {
 
 export const createClient = new ApolloClient({
     link: createLink(),
-    cache: new InMemoryCache({
-        typePolicies: {
-            Teams: {
-                keyFields: []
-            }
-        }
-    })
+    cache: new InMemoryCache()
 });
 
 export const withApollo = createWithApollo(createClient);

@@ -1,12 +1,15 @@
 import Link from "next/link"
 import { useRouter } from "next/router";
+import { isServer } from "../constants";
 import { useMeQuery } from "../generated/graphql";
 
 
 const Navbar = () => {
     const router = useRouter();
 
-    const { data, loading, error } = useMeQuery();
+    const { data, loading, error } = useMeQuery({
+        skip: isServer(),
+    });
 
     if (loading) {
         return (
@@ -15,7 +18,7 @@ const Navbar = () => {
                     Slack Clone
                 </div>
                 <div className="">
-                    <Link href="/signin">
+                    <Link href="/login">
                         <a className="ml-2 hover:bg-primary p-2">Sign in</a>
                     </Link>
                     <Link href="/register">
@@ -51,7 +54,7 @@ const Navbar = () => {
                 Slack Clone
             </div>
             <div className="">
-                <Link href="/signin">
+                <Link href="/login">
                     <a className="ml-2 hover:bg-primary p-2">Sign in</a>
                 </Link>
                 <Link href="/register">

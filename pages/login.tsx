@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import InputField from '../components/InputField';
-import { useLoginMutation } from "../generated/graphql"
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql"
 import { setJwtToken } from '../lib/auth';
 import { ToErrorMap } from '../lib/toErrorMap';
 import { withApollo } from '../lib/withApollo';
@@ -25,6 +25,15 @@ const Login: React.FC = () => {
         variables: {
           username,
           password
+        },
+        update: (cache, { data }) => {
+          cache.writeQuery<MeQuery>({
+            query: MeDocument,
+            data: {
+              __typename: "Query",
+              me: data?.login.user
+            }
+          })
         }
       })
       setLoading(false);
