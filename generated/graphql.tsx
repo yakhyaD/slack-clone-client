@@ -201,6 +201,14 @@ export type ErrorInfosFragment = { __typename?: 'ErrorField', field: string, mes
 
 export type UserInfosFragment = { __typename?: 'User', id: number, username: string, email: string };
 
+export type CreateChannelMutationVariables = Exact<{
+  teamId: Scalars['Float'];
+  name: Scalars['String'];
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'CreateChannelResponse', ok: boolean, error?: string | null | undefined } };
+
 export type CreateTeamMutationVariables = Exact<{
   name: Scalars['String'];
 }>;
@@ -246,6 +254,41 @@ export const UserInfosFragmentDoc = gql`
   email
 }
     `;
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($teamId: Float!, $name: String!) {
+  createChannel(teamId: $teamId, name: $name) {
+    ok
+    error
+  }
+}
+    `;
+export type CreateChannelMutationFn = Apollo.MutationFunction<CreateChannelMutation, CreateChannelMutationVariables>;
+
+/**
+ * __useCreateChannelMutation__
+ *
+ * To run a mutation, you first call `useCreateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChannelMutation, { data, loading, error }] = useCreateChannelMutation({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMutation, CreateChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument, options);
+      }
+export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
+export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
+export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
 export const CreateTeamDocument = gql`
     mutation CreateTeam($name: String!) {
   createTeam(name: $name)

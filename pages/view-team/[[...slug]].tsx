@@ -1,5 +1,6 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import Modal from "../../components/Modal";
 
 import { Sidebar } from "../../components/Sidebar";
 import { useTeamsQuery } from "../../generated/graphql";
@@ -22,7 +23,9 @@ const ViewTeam: NextPage = () => {
         currentChannelId = slug[1];
     }
 
-    const { data, loading } = useTeamsQuery();
+    const { data, loading } = useTeamsQuery({
+        fetchPolicy: "network-only"
+    });
 
     if (loading) {
         return (
@@ -38,10 +41,12 @@ const ViewTeam: NextPage = () => {
     }
 
     return (
-        <div className="flex w-full h-screen">
+        <div className="relative flex w-full h-screen">
             <Sidebar teams={data?.teams} currentTeamId={currentTeamId} currentChannelId={currentChannelId} />
             {/* <MessageBox /> */}
-            Team page
+            <div>
+                Team page
+            </div>
         </div>
     )
 }

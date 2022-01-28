@@ -9,6 +9,7 @@ const Navbar = () => {
 
     const { data, loading, error } = useMeQuery({
         skip: isServer(),
+        fetchPolicy: "network-only"
     });
 
     if (loading) {

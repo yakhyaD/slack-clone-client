@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from "next/link";
+import Modal from './Modal';
+import AddChannelModal from './Modal';
+import { useMeQuery } from '../generated/graphql';
 
 
 export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
+    const [isOpen, setIsOpen] = useState(false);
     const allTeams = [...teams.teamsOwned, ...teams.teamsInvited];
+
+    const { data, loading } = useMeQuery({
+        fetchPolicy: "network-only"
+    })
 
     const currentTeam = !!currentTeamId && allTeams.length > 1 ? allTeams.find(team => team.id === parseInt(currentTeamId)) : allTeams[0];
 
-    console.log("allTeams", allTeams);
-    console.log("currentTeam", currentTeam)
     return (
         <div className="h-screen w-1/4 bg-primary flex">
             <div className="flex flex-col w-1/3 py-2 pt-5 mx-auto align-center border-r-2 border-r-white">
@@ -31,12 +37,16 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                     {/* <p className="text-sm font-light">created by</p> */}
                 </div>
                 <div className="pt-5 pl-3">
-                    <div className="flex justify-between w-full align-center">
-                        <h3 className="text-md underline mb-4">Channel:</h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
+                    {!loading && data?.me.id === currentTeam.ownerId ? (
+                        <div className="flex justify-between w-full align-center hover:cursor-pointer"
+                            onClick={() => setIsOpen(state => !state)}
+                        >
+                            <h3 className="text-md underline mb-4">Channel:</h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>) : null
+                    }
                     <div className="flex flex-col align-center text-silver">
                         {currentTeam.channels && currentTeam.channels.map((channel) => (
                             <Link key={channel.id} href={`/view-team/${currentTeam.id}/${channel.id}`}>
@@ -51,6 +61,7 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
 
                 </div>
             </div>
+            {<AddChannelModal isOpen={isOpen} setIsOpen={setIsOpen} currentTeamId={currentTeamId} />}
         </div>
     );
 };
