@@ -4,13 +4,21 @@ query Teams {
         id
         name
         ownerId
+        channels {
+        id
+        name
       }
-      teamsInvited {
-        team {
+    }
+    teamsInvited {
+      team {
+        id
+        name
+        ownerId
+        channels {
           id
           name
-          ownerId
         }
       }
+    }
   }
 }

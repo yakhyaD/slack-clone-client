@@ -231,7 +231,7 @@ export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: nu
 export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TeamsQuery = { __typename?: 'Query', teams: { __typename?: 'TeamResponse', teamsOwned?: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number }> | null | undefined, teamsInvited?: Array<{ __typename?: 'Member', team?: { __typename?: 'Team', id: number, name: string, ownerId: number } | null | undefined }> | null | undefined } };
+export type TeamsQuery = { __typename?: 'Query', teams: { __typename?: 'TeamResponse', teamsOwned?: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined }> | null | undefined, teamsInvited?: Array<{ __typename?: 'Member', team?: { __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined } | null | undefined }> | null | undefined } };
 
 export const ErrorInfosFragmentDoc = gql`
     fragment ErrorInfos on ErrorField {
@@ -399,12 +399,20 @@ export const TeamsDocument = gql`
       id
       name
       ownerId
+      channels {
+        id
+        name
+      }
     }
     teamsInvited {
       team {
         id
         name
         ownerId
+        channels {
+          id
+          name
+        }
       }
     }
   }
