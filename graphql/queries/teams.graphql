@@ -1,24 +1,12 @@
 query Teams {
   teams {
-      teamsOwned {
-        id
-        name
-        ownerId
-        channels {
-        id
-        name
-      }
-    }
-    teamsInvited {
-      team {
-        id
-        name
-        ownerId
-        channels {
-          id
-          name
-        }
-      }
+    id
+    name
+    ownerId
+    channels {
+      id
+      name
+      createdAt
     }
   }
 }

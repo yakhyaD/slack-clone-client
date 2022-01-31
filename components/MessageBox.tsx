@@ -11,7 +11,7 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
         fetchPolicy: "network-only",
         variables: {
             teamId: parseInt(currentTeamId),
-            channelId: parseInt(currentChannelId)
+            channelId: parseInt(currentChannelId) ?? 0
         }
     })
 
@@ -34,7 +34,7 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
             <div className="w-full py-2 bg-primary text-white text-center border-2 border-t-0 font-medium"># {data?.channel.name ?? "Channel"}</div>
             <div className="flex flex-col justify-between h-full pl-3 mt-3 overflow-y-scroll">
                 <ul>
-                    {data?.channel.messages ? data?.channel.messages.map(message =>
+                    {data?.channel.messages.length ? data?.channel.messages.map(message =>
                         <li key={message.id} className="py-2">
                             <div className="flex align-center">
                                 <div className="font-bold text-sm">{message.user.username}</div>

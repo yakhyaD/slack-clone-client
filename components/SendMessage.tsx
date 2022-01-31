@@ -44,7 +44,11 @@ const SendMessage = ({ currentChannelId }) => {
 
     return (
         <form className="flex justify-start w-full" onSubmit={handleSubmit}>
-            <input onChange={(e) => setText(e.target.value)} type="text" name="text" placeholder="type here ..." className="flex-grow pl-1 outline-none border-t-2 border-secondary" />
+            <input type="text" name="text" placeholder="type here ..."
+                className="flex-grow pl-1 outline-none border-t-2 border-secondary"
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+            />
             <button type="submit" className="py-2 px-4 bg-secondary text-white text-center border-black">
                 {isLoading ? (
                     <svg className="animate-spin h-5 w-5 ml-2 text-white border-4 rounded-full" viewBox="0 0 24 24"></svg>

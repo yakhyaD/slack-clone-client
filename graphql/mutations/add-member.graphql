@@ -1,0 +1,6 @@
+mutation AddMember($teamId: Float!, $username: String!) {
+  addMember(teamId: $teamId, username: $username) {
+    ok
+    error
+  }
+}

@@ -35,13 +35,13 @@ const CreateTeam: NextPage = () => {
             return
         }
         setLoading(true);
-        await router.push("/")
+        await router.push("/view-team/");
     }
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col w-1/3 mx-auto my-20">
             <InputField required={true} label="Team Name" type="text" value={name} setValue={setName} error={error} />
-            <button className="bg-lighblue w-1/4 mx-auto py-2 px-4 text-center text-white text-xlhover:bg-blue hover:cursor-pointer flex justify-center rounded-xl"
+            <button className="bg-lightblue w-1/4 mx-auto py-2 px-4 text-center text-white text-xlhover:bg-blue hover:cursor-pointer flex justify-center rounded-xl"
                 type="submit"
                 disabled={loading}
             >

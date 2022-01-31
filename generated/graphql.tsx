@@ -149,7 +149,7 @@ export type Query = {
   getMembers: Array<Member>;
   me?: Maybe<User>;
   team: SingleTeam;
-  teams: TeamResponse;
+  teams: Array<Team>;
 };
 
 
@@ -184,12 +184,6 @@ export type Team = {
   users?: Maybe<Array<User>>;
 };
 
-export type TeamResponse = {
-  __typename?: 'TeamResponse';
-  teamsInvited?: Maybe<Array<Member>>;
-  teamsOwned?: Maybe<Array<Team>>;
-};
-
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTime'];
@@ -210,6 +204,14 @@ export type UserResponse = {
 export type ErrorInfosFragment = { __typename?: 'ErrorField', field: string, message: string };
 
 export type UserInfosFragment = { __typename?: 'User', id: number, username: string, email: string };
+
+export type AddMemberMutationVariables = Exact<{
+  teamId: Scalars['Float'];
+  username: Scalars['String'];
+}>;
+
+
+export type AddMemberMutation = { __typename?: 'Mutation', addMember: { __typename?: 'AddMemberResponse', ok: boolean, error?: string | null | undefined } };
 
 export type CreateChannelMutationVariables = Exact<{
   teamId: Scalars['Float'];
@@ -272,7 +274,7 @@ export type TeamQuery = { __typename?: 'Query', team: { __typename?: 'SingleTeam
 export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TeamsQuery = { __typename?: 'Query', teams: { __typename?: 'TeamResponse', teamsOwned?: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined }> | null | undefined, teamsInvited?: Array<{ __typename?: 'Member', team?: { __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined } | null | undefined }> | null | undefined } };
+export type TeamsQuery = { __typename?: 'Query', teams: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string, createdAt: any }> | null | undefined }> };
 
 export const ErrorInfosFragmentDoc = gql`
     fragment ErrorInfos on ErrorField {
@@ -287,6 +289,41 @@ export const UserInfosFragmentDoc = gql`
   email
 }
     `;
+export const AddMemberDocument = gql`
+    mutation AddMember($teamId: Float!, $username: String!) {
+  addMember(teamId: $teamId, username: $username) {
+    ok
+    error
+  }
+}
+    `;
+export type AddMemberMutationFn = Apollo.MutationFunction<AddMemberMutation, AddMemberMutationVariables>;
+
+/**
+ * __useAddMemberMutation__
+ *
+ * To run a mutation, you first call `useAddMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addMemberMutation, { data, loading, error }] = useAddMemberMutation({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useAddMemberMutation(baseOptions?: Apollo.MutationHookOptions<AddMemberMutation, AddMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddMemberMutation, AddMemberMutationVariables>(AddMemberDocument, options);
+      }
+export type AddMemberMutationHookResult = ReturnType<typeof useAddMemberMutation>;
+export type AddMemberMutationResult = Apollo.MutationResult<AddMemberMutation>;
+export type AddMemberMutationOptions = Apollo.BaseMutationOptions<AddMemberMutation, AddMemberMutationVariables>;
 export const CreateChannelDocument = gql`
     mutation CreateChannel($teamId: Float!, $name: String!) {
   createChannel(teamId: $teamId, name: $name) {
@@ -594,25 +631,13 @@ export type TeamQueryResult = Apollo.QueryResult<TeamQuery, TeamQueryVariables>;
 export const TeamsDocument = gql`
     query Teams {
   teams {
-    teamsOwned {
+    id
+    name
+    ownerId
+    channels {
       id
       name
-      ownerId
-      channels {
-        id
-        name
-      }
-    }
-    teamsInvited {
-      team {
-        id
-        name
-        ownerId
-        channels {
-          id
-          name
-        }
-      }
+      createdAt
     }
   }
 }

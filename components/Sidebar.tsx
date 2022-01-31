@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import Link from "next/link";
-import Modal from './Modal';
-import AddChannelModal from './Modal';
+import AddChannelModal from './AddChannelModal';
+import AddMemberModal from './AddMemberModal';
+
 import { useMeQuery } from '../generated/graphql';
 
 
 export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const allTeams = [...teams.teamsOwned, ...teams.teamsInvited];
+    const [openAddMemberModal, setOpenAddMemberModal] = useState(false);
+
 
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only"
     })
-    console.log(allTeams);
+    console.log(teams);
 
     const getFirstCharacter = (name) => {
         if (!name) {
@@ -21,12 +23,12 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
         return name.charAt(0).toUpperCase();
     }
 
-    const currentTeam = !!currentTeamId && allTeams.length > 1 ? allTeams.find(team => team.id === parseInt(currentTeamId)) : allTeams[0];
+    const currentTeam = !!currentTeamId && teams.length > 1 ? teams.find(team => team.id === parseInt(currentTeamId)) : teams[0];
 
     return (
         <div className="h-full w-1/3 bg-primary flex">
             <div className="flex flex-col w-1/3 py-2 pt-5 mx-auto align-center border-r-2 border-r-white">
-                {allTeams.map((team) => (
+                {teams.map((team) => (
                     <Link key={team.id} href={`/view-team/${team.id}`} passHref>
                         <div className="w-[50px] h-[50px] bg-secondary mx-auto   mb-5 rounded-xl border-2 border-white text-white text-2xl text-center flex justify-center align-center hover:cursor-pointer">
                             <span className="my-auto">{getFirstCharacter(team.name)}</span>
@@ -66,10 +68,16 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                             </Link>
                         ))}
                     </div>
+                    <button className="py-2 text-bold text-md text-lightblue hover:underline hover:cursor-pointer "
+                        onClick={() => setOpenAddMemberModal(state => !state)}
+                    >
+                        Invite People
+                    </button>
 
                 </div>
             </div>
             {<AddChannelModal isOpen={isOpen} setIsOpen={setIsOpen} currentTeamId={currentTeamId} />}
+            {<AddMemberModal isOpen={openAddMemberModal} setIsOpen={setOpenAddMemberModal} currentTeamId={currentTeamId} />}
         </div>
     );
 };

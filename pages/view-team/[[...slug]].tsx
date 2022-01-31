@@ -46,7 +46,7 @@ const ViewTeam: NextPage = () => {
     // if (error) router.replace('/login?next=' + router.pathname);
 
 
-    if (data?.teams?.teamsInvited.length < 1 && data?.teams?.teamsOwned.length < 1) {
+    if (data?.teams.length < 1) {
         router.push('/create-team');
     }
 
