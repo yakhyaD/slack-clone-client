@@ -16,7 +16,7 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
     const currentTeam = !!currentTeamId && allTeams.length > 1 ? allTeams.find(team => team.id === parseInt(currentTeamId)) : allTeams[0];
 
     return (
-        <div className="h-screen w-1/4 bg-primary flex">
+        <div className="h-full w-1/3 bg-primary flex">
             <div className="flex flex-col w-1/3 py-2 pt-5 mx-auto align-center border-r-2 border-r-white">
                 {allTeams.map((team) => (
                     <Link key={team.id} href={`/view-team/${team.id}`} passHref>

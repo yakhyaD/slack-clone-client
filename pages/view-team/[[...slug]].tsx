@@ -1,16 +1,19 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import Modal from "../../components/Modal";
 
 import { Sidebar } from "../../components/Sidebar";
+import MessageBox from "../../components/MessageBox";
 import { useTeamsQuery } from "../../generated/graphql";
 import { withApollo } from "../../lib/withApollo";
+import SendMessage from "../../components/SendMessage";
+import { useEffect, useState } from "react";
 
 
 const ViewTeam: NextPage = () => {
     const router = useRouter();
     let currentTeamId = "";
     let currentChannelId = "";
+    const [showMessageBox, setShowMessageBox] = useState(false)
 
 
     const { slug } = router.query;
@@ -22,6 +25,12 @@ const ViewTeam: NextPage = () => {
         }
         currentChannelId = slug[1];
     }
+    useEffect(() => {
+        if (!!currentTeamId && !!currentChannelId) {
+            setShowMessageBox(true)
+        }
+        return () => setShowMessageBox(false)
+    }, [currentChannelId, currentTeamId]);
 
     const { data, loading } = useTeamsQuery({
         fetchPolicy: "network-only"
@@ -36,6 +45,7 @@ const ViewTeam: NextPage = () => {
     }
     // if (error) router.replace('/login?next=' + router.pathname);
 
+
     if (data?.teams?.teamsInvited.length < 1 && data?.teams?.teamsOwned.length < 1) {
         router.push('/create-team');
     }
@@ -43,10 +53,17 @@ const ViewTeam: NextPage = () => {
     return (
         <div className="relative flex w-full h-screen">
             <Sidebar teams={data?.teams} currentTeamId={currentTeamId} currentChannelId={currentChannelId} />
-            {/* <MessageBox /> */}
-            <div>
-                Team page
-            </div>
+            {showMessageBox ? (
+                <div className="flex flex-col w-full">
+                    <MessageBox currentTeamId={currentTeamId} currentChannelId={currentChannelId} />
+                    <SendMessage />
+                </div>
+            ) : (
+                <div className="w-full bg-secondary flex justify-center align-center text-white text-2xl">
+                    <span className="text-center">Welcome to the team</span>
+                </div>
+            )}
+
         </div>
     )
 }

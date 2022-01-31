@@ -5,9 +5,8 @@ import { useMeQuery } from "../generated/graphql";
 
 
 const Navbar = () => {
-    const router = useRouter();
 
-    const { data, loading, error } = useMeQuery({
+    const { data, loading } = useMeQuery({
         skip: isServer(),
         fetchPolicy: "network-only"
     });
