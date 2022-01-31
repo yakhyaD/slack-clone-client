@@ -12,6 +12,14 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only"
     })
+    console.log(allTeams);
+
+    const getFirstCharacter = (name) => {
+        if (!name) {
+            return "N";
+        }
+        return name.charAt(0).toUpperCase();
+    }
 
     const currentTeam = !!currentTeamId && allTeams.length > 1 ? allTeams.find(team => team.id === parseInt(currentTeamId)) : allTeams[0];
 
@@ -21,7 +29,7 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                 {allTeams.map((team) => (
                     <Link key={team.id} href={`/view-team/${team.id}`} passHref>
                         <div className="w-[50px] h-[50px] bg-secondary mx-auto   mb-5 rounded-xl border-2 border-white text-white text-2xl text-center flex justify-center align-center hover:cursor-pointer">
-                            <span className="my-auto">{team.name[0].toUpperCase()}</span>
+                            <span className="my-auto">{getFirstCharacter(team.name)}</span>
                         </div>
                     </Link>
                 ))}

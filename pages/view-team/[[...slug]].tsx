@@ -56,7 +56,7 @@ const ViewTeam: NextPage = () => {
             {showMessageBox ? (
                 <div className="flex flex-col w-full">
                     <MessageBox currentTeamId={currentTeamId} currentChannelId={currentChannelId} />
-                    <SendMessage />
+                    <SendMessage currentChannelId={currentChannelId} />
                 </div>
             ) : (
                 <div className="w-full bg-secondary flex justify-center align-center text-white text-2xl">

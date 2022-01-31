@@ -70,7 +70,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   addMember: AddMemberResponse;
   createChannel: CreateChannelResponse;
-  createMessage: Scalars['Boolean'];
   createTeam: Scalars['Boolean'];
   deleteChannel: Scalars['Boolean'];
   deleteMessage: Scalars['Boolean'];
@@ -79,6 +78,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   register: UserResponse;
   resetPassword: UserResponse;
+  sendMessage: Scalars['Boolean'];
   updateChannel: Scalars['Boolean'];
 };
 
@@ -92,12 +92,6 @@ export type MutationAddMemberArgs = {
 export type MutationCreateChannelArgs = {
   name: Scalars['String'];
   teamId: Scalars['Float'];
-};
-
-
-export type MutationCreateMessageArgs = {
-  channelId: Scalars['Float'];
-  text: Scalars['String'];
 };
 
 
@@ -135,6 +129,12 @@ export type MutationRegisterArgs = {
 export type MutationResetPasswordArgs = {
   newPassword: Scalars['String'];
   token: Scalars['String'];
+};
+
+
+export type MutationSendMessageArgs = {
+  channelId: Scalars['Float'];
+  text: Scalars['String'];
 };
 
 
@@ -240,6 +240,14 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', access_token?: string | null | undefined, errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined } };
+
+export type SendMessageMutationVariables = Exact<{
+  channelId: Scalars['Float'];
+  text: Scalars['String'];
+}>;
+
+
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: boolean };
 
 export type ChannelQueryVariables = Exact<{
   channelId: Scalars['Float'];
@@ -426,6 +434,38 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const SendMessageDocument = gql`
+    mutation SendMessage($channelId: Float!, $text: String!) {
+  sendMessage(channelId: $channelId, text: $text)
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *      text: // value for 'text'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
 export const ChannelDocument = gql`
     query Channel($channelId: Float!, $teamId: Float!) {
   channel(channelId: $channelId, teamId: $teamId) {
