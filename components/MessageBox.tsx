@@ -1,19 +1,65 @@
-import React from 'react';
-import { useChannelQuery } from '../generated/graphql';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { MessageAddedDocument, useChannelQuery, useMessageAddedSubscription } from '../generated/graphql';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-
 const MessageBox = ({ currentTeamId, currentChannelId }) => {
     dayjs.extend(relativeTime);
+    const subscribeToNewMessages = useRef(() => { });
+    const messageList = useRef<HTMLHeadingElement>();
 
-    const { data, loading } = useChannelQuery({
+    const { data, loading, subscribeToMore } = useChannelQuery({
         fetchPolicy: "network-only",
         variables: {
             teamId: parseInt(currentTeamId),
-            channelId: parseInt(currentChannelId) ?? 0
+            channelId: parseInt(currentChannelId)
+        },
+    })
+    const { loading: subLoading } = useMessageAddedSubscription({
+        variables: {
+            channelId: parseInt(currentChannelId)
         }
     })
+
+    subscribeToNewMessages.current = useCallback(() => {
+        subscribeToMore({
+            document: MessageAddedDocument,
+            variables: {
+                teamId: parseInt(currentTeamId),
+                channelId: parseInt(currentChannelId)
+            },
+            updateQuery: (prev, { subscriptionData }: any) => {
+                if (!subscriptionData.data) return prev;
+                const newFeedItem = subscriptionData.data.messageAdded
+
+                console.log("newFeedItem", newFeedItem)
+                console.log("prev", prev)
+
+
+                return Object.assign({}, prev, {
+                    prev: {
+                        ...prev,
+                        messages: [newFeedItem, ...prev.channel.messages]
+                    }
+                });
+            }
+        })
+    }, [currentChannelId, subscribeToMore, currentTeamId])
+
+
+    useEffect(() => {
+        if (!loading) {
+            messageList.current.scrollTop = messageList.current.scrollHeight;
+        }
+
+    }, [loading])
+
+    useEffect(() => {
+        subscribeToNewMessages.current();
+        if (messageList.current) {
+            messageList.current.scrollTop = messageList.current.scrollHeight;
+        }
+    }, [subLoading])
 
     if (loading) {
         return (
@@ -22,6 +68,7 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
             </div>
         )
     }
+
     const formatDate = (date) => {
         const dateFormatted = dayjs(date).fromNow();
         if (dateFormatted.includes("days ago") || dateFormatted.includes("month ago")) {
@@ -32,9 +79,9 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
     return (
         <>
             <div className="w-full py-2 bg-primary text-white text-center border-2 border-t-0 font-medium"># {data?.channel.name ?? "Channel"}</div>
-            <div className="flex flex-col justify-between h-full pl-3 mt-3 overflow-y-scroll">
+            <div ref={messageList} className="flex flex-col justify-between h-full pl-3 mt-3 overflow-y-auto">
                 <ul>
-                    {data?.channel.messages.length ? data?.channel.messages.map(message =>
+                    {!loading && data?.channel.messages.length ? data?.channel.messages.map(message =>
                         <li key={message.id} className="py-2">
                             <div className="flex align-center">
                                 <div className="font-bold text-sm">{message.user.username}</div>

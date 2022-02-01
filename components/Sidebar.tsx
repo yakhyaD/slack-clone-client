@@ -14,7 +14,6 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only"
     })
-    console.log(teams);
 
     const getFirstCharacter = (name) => {
         if (!name) {

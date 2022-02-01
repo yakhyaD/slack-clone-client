@@ -59,6 +59,7 @@ export type Member = {
 
 export type Message = {
   __typename?: 'Message';
+  channelId: User;
   createdAt: Scalars['DateTime'];
   id: Scalars['Float'];
   text: Scalars['String'];
@@ -173,6 +174,16 @@ export type SingleTeam = {
   users?: Maybe<Array<Member>>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  messageAdded: Message;
+};
+
+
+export type SubscriptionMessageAddedArgs = {
+  channelId: Scalars['Float'];
+};
+
 export type Team = {
   __typename?: 'Team';
   channels?: Maybe<Array<Channel>>;
@@ -275,6 +286,13 @@ export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TeamsQuery = { __typename?: 'Query', teams: Array<{ __typename?: 'Team', id: number, name: string, ownerId: number, channels?: Array<{ __typename?: 'Channel', id: number, name: string, createdAt: any }> | null | undefined }> };
+
+export type MessageAddedSubscriptionVariables = Exact<{
+  channelId: Scalars['Float'];
+}>;
+
+
+export type MessageAddedSubscription = { __typename?: 'Subscription', messageAdded: { __typename?: 'Message', id: number, text: string, createdAt: any, user?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined } };
 
 export const ErrorInfosFragmentDoc = gql`
     fragment ErrorInfos on ErrorField {
@@ -669,3 +687,38 @@ export function useTeamsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Team
 export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>;
 export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>;
 export type TeamsQueryResult = Apollo.QueryResult<TeamsQuery, TeamsQueryVariables>;
+export const MessageAddedDocument = gql`
+    subscription MessageAdded($channelId: Float!) {
+  messageAdded(channelId: $channelId) {
+    id
+    text
+    createdAt
+    user {
+      ...UserInfos
+    }
+  }
+}
+    ${UserInfosFragmentDoc}`;
+
+/**
+ * __useMessageAddedSubscription__
+ *
+ * To run a query within a React component, call `useMessageAddedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMessageAddedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMessageAddedSubscription({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *   },
+ * });
+ */
+export function useMessageAddedSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessageAddedSubscription, MessageAddedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<MessageAddedSubscription, MessageAddedSubscriptionVariables>(MessageAddedDocument, options);
+      }
+export type MessageAddedSubscriptionHookResult = ReturnType<typeof useMessageAddedSubscription>;
+export type MessageAddedSubscriptionResult = Apollo.SubscriptionResult<MessageAddedSubscription>;
