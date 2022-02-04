@@ -1,5 +1,5 @@
 import { withApollo as createWithApollo } from "next-apollo";
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from "@apollo/client"
+import { ApolloClient, InMemoryCache, split, createHttpLink, ApolloLink } from "@apollo/client"
 import { WebSocketLink } from "@apollo/client/link/ws"
 import { getMainDefinition } from "@apollo/client/utilities"
 import { makeTokenRefreshLink } from "./apolloRefreshToken";
@@ -24,21 +24,19 @@ const operationIsSubscription = ({ query }) => {
     );
 }
 
-const getOrCreateWebsocketLink = () => {
-    return new WebSocketLink({
-        uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`.replace("http", "ws").replace("https", "wss"),
-        options: {
-            reconnect: true,
-            timeout: 30000,
-            connectionParams: () => {
-                return { headers: getHeaders() }
-            },
-            reconnectionAttempts: 5
+// let wsLink;
+const getOrCreateWebsocketLink = () => new WebSocketLink({
+    uri: `${process.env.NEXT_PUBLIC_API_URL}/graphql`.replace("http", "ws").replace("https", "wss"),
+    options: {
+        reconnect: true,
+        timeout: 30000,
+        connectionParams: () => {
+            return { headers: getHeaders() }
         },
-    })
-}
+    },
+})
 const createLink = () => {
-    const httpLink = new HttpLink({
+    const httpLink = createHttpLink({
         uri: process.env.NEXT_PUBLIC_API_URL + "/graphql",
         credentials: "include"
     })
@@ -70,10 +68,10 @@ const createLink = () => {
             errorLink,
             // Use "getOrCreateWebsocketLink" to init WS lazily
             // otherwise WS connection will be created + used even if using "query"
-            ApolloLink.split(operationIsSubscription, getOrCreateWebsocketLink(), httpLink),
+            split(operationIsSubscription, getOrCreateWebsocketLink(), httpLink),
         ])
     } else {
-        return ApolloLink.from([authLink, httpLink, errorLink])
+        return ApolloLink.from([authLink, httpLink])
     }
 }
 

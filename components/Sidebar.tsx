@@ -22,7 +22,7 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
         return name.charAt(0).toUpperCase();
     }
 
-    const currentTeam = !!currentTeamId && teams.length > 1 ? teams.find(team => team.id === parseInt(currentTeamId)) : teams[0];
+    const currentTeam = !!currentTeamId && teams?.length > 1 ? teams.find(team => team.id === parseInt(currentTeamId)) : teams[0];
 
     return (
         <div className="h-full w-1/3 bg-primary flex">
@@ -67,11 +67,13 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                             </Link>
                         ))}
                     </div>
-                    <button className="py-2 text-bold text-md text-lightblue hover:underline hover:cursor-pointer "
-                        onClick={() => setOpenAddMemberModal(state => !state)}
-                    >
-                        Invite People
-                    </button>
+                    {!loading && data?.me.id === currentTeam.ownerId &&
+                        <button className="py-2 text-bold text-md text-lightblue hover:underline hover:cursor-pointer "
+                            onClick={() => setOpenAddMemberModal(state => !state)}
+                        >
+                            Invite People
+                        </button>
+                    }
 
                 </div>
             </div>

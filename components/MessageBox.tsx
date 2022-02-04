@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MessageAddedDocument, useChannelQuery, useMessageAddedSubscription } from '../generated/graphql';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -15,9 +15,12 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
             channelId: parseInt(currentChannelId)
         },
     })
-    const { loading: subLoading } = useMessageAddedSubscription({
+    useMessageAddedSubscription({
         variables: {
             channelId: parseInt(currentChannelId)
+        },
+        onSubscriptionComplete: () => {
+            subscribeToNewMessages.current();
         }
     })
 
@@ -31,15 +34,14 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
             updateQuery: (prev, { subscriptionData }: any) => {
                 if (!subscriptionData.data) return prev;
                 const newFeedItem = subscriptionData.data.messageAdded
-
-                console.log("newFeedItem", newFeedItem)
                 console.log("prev", prev)
-
-
                 return Object.assign({}, prev, {
-                    prev: {
-                        ...prev,
-                        messages: [newFeedItem, ...prev.channel.messages]
+                    channel: {
+                        ...prev.channel,
+                        messages: [
+                            ...prev.channel.messages,
+                            newFeedItem,
+                        ]
                     }
                 });
             }
@@ -48,18 +50,18 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
 
 
     useEffect(() => {
-        if (!loading) {
+        if (!loading && data?.channel) {
             messageList.current.scrollTop = messageList.current.scrollHeight;
         }
 
-    }, [loading])
+    }, [loading, data])
 
-    useEffect(() => {
-        subscribeToNewMessages.current();
-        if (messageList.current) {
-            messageList.current.scrollTop = messageList.current.scrollHeight;
-        }
-    }, [subLoading])
+    // useEffect(() => {
+    //     subscribeToNewMessages.current();
+    //     if (messageList.current) {
+    //         messageList.current.scrollTop = messageList.current.scrollHeight;
+    //     }
+    // }, [])
 
     if (loading) {
         return (

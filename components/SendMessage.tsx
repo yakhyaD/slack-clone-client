@@ -15,7 +15,7 @@ const SendMessage = ({ currentChannelId }) => {
         e.preventDefault();
         setIsLoading(true);
 
-        if (!text) {
+        if (!text.trim()) {
             setError("Message cannot be empty");
             setIsLoading(false);
             return;
