@@ -1,8 +1,6 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 
-
-import { useEffect, useState } from "react";
 import MessageBox from "../../../../components/MessageBox";
 import SendMessage from "../../../../components/SendMessage";
 import { Sidebar } from "../../../../components/Sidebar";
@@ -12,7 +10,7 @@ import { withApollo } from "../../../../lib/withApollo";
 
 const DirectMessage: NextPage = () => {
     const router = useRouter();
-    const { teamId, userId } = router.query;
+    const { teamId, userId } = router.query as any;
 
     const { data, loading } = useTeamsQuery({
         fetchPolicy: "network-only"
@@ -34,7 +32,7 @@ const DirectMessage: NextPage = () => {
                     currentTeamId={teamId}
                     currentChannelId={userId}
                 />
-                <SendMessage currentChannelId={userId} />
+                <SendMessage roomId={teamId} handler={"DirectMessage"} receiverId={userId} />
             </div>
 
         </div>

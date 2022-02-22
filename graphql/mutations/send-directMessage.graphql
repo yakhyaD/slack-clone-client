@@ -1,0 +1,3 @@
+mutation SendDirectMessage($teamId: Float!, $receiver: Float!, $text: String!) {
+  sendDirectMessage(teamId: $teamId, receiver: $receiver, text: $text)
+}

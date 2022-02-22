@@ -45,6 +45,14 @@ export type CreateChannelResponse = {
   ok: Scalars['Boolean'];
 };
 
+export type DirectMessage = {
+  __typename?: 'DirectMessage';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['Float'];
+  text: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type ErrorField = {
   __typename?: 'ErrorField';
   field: Scalars['String'];
@@ -79,6 +87,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   register: UserResponse;
   resetPassword: UserResponse;
+  sendDirectMessage: Scalars['Boolean'];
   sendMessage: Scalars['Boolean'];
   updateChannel: Scalars['Boolean'];
 };
@@ -133,6 +142,13 @@ export type MutationResetPasswordArgs = {
 };
 
 
+export type MutationSendDirectMessageArgs = {
+  receiver: Scalars['Float'];
+  teamId: Scalars['Float'];
+  text: Scalars['String'];
+};
+
+
 export type MutationSendMessageArgs = {
   channelId: Scalars['Float'];
   text: Scalars['String'];
@@ -147,6 +163,7 @@ export type MutationUpdateChannelArgs = {
 export type Query = {
   __typename?: 'Query';
   channel: Channel;
+  directMessages: Array<DirectMessage>;
   getMembers: Array<Member>;
   me?: Maybe<User>;
   members: Array<User>;
@@ -157,6 +174,12 @@ export type Query = {
 
 export type QueryChannelArgs = {
   channelId: Scalars['Float'];
+  teamId: Scalars['Float'];
+};
+
+
+export type QueryDirectMessagesArgs = {
+  receiverId: Scalars['Float'];
   teamId: Scalars['Float'];
 };
 
@@ -266,6 +289,15 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', access_token?: string | null | undefined, errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined } };
+
+export type SendDirectMessageMutationVariables = Exact<{
+  teamId: Scalars['Float'];
+  receiver: Scalars['Float'];
+  text: Scalars['String'];
+}>;
+
+
+export type SendDirectMessageMutation = { __typename?: 'Mutation', sendDirectMessage: boolean };
 
 export type SendMessageMutationVariables = Exact<{
   channelId: Scalars['Float'];
@@ -540,6 +572,39 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const SendDirectMessageDocument = gql`
+    mutation SendDirectMessage($teamId: Float!, $receiver: Float!, $text: String!) {
+  sendDirectMessage(teamId: $teamId, receiver: $receiver, text: $text)
+}
+    `;
+export type SendDirectMessageMutationFn = Apollo.MutationFunction<SendDirectMessageMutation, SendDirectMessageMutationVariables>;
+
+/**
+ * __useSendDirectMessageMutation__
+ *
+ * To run a mutation, you first call `useSendDirectMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendDirectMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendDirectMessageMutation, { data, loading, error }] = useSendDirectMessageMutation({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      receiver: // value for 'receiver'
+ *      text: // value for 'text'
+ *   },
+ * });
+ */
+export function useSendDirectMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendDirectMessageMutation, SendDirectMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendDirectMessageMutation, SendDirectMessageMutationVariables>(SendDirectMessageDocument, options);
+      }
+export type SendDirectMessageMutationHookResult = ReturnType<typeof useSendDirectMessageMutation>;
+export type SendDirectMessageMutationResult = Apollo.MutationResult<SendDirectMessageMutation>;
+export type SendDirectMessageMutationOptions = Apollo.BaseMutationOptions<SendDirectMessageMutation, SendDirectMessageMutationVariables>;
 export const SendMessageDocument = gql`
     mutation SendMessage($channelId: Float!, $text: String!) {
   sendMessage(channelId: $channelId, text: $text)
