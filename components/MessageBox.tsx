@@ -3,7 +3,7 @@ import { MessageAddedDocument, useChannelQuery, useMessageAddedSubscription } fr
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-const MessageBox = ({ currentTeamId, currentChannelId }) => {
+const MessageBox = ({ currentTeamId, currentChannelId, title = null }) => {
     dayjs.extend(relativeTime);
     const subscribeToNewMessages = useRef(() => { });
     const messageList = useRef<HTMLHeadingElement>();
@@ -80,7 +80,7 @@ const MessageBox = ({ currentTeamId, currentChannelId }) => {
     }
     return (
         <>
-            <div className="w-full py-2 bg-primary text-white text-center border-2 border-t-0 font-medium"># {data?.channel.name ?? "Channel"}</div>
+            <div className="w-full py-2 bg-primary text-white text-center border-2 border-t-0 font-medium"># {title ?? data?.channel.name ?? "Channel"}</div>
             <div ref={messageList} className="flex flex-col justify-between h-full pl-3 mt-3 overflow-y-auto">
                 <ul>
                     {!loading && data?.channel.messages.length ? data?.channel.messages.map(message =>

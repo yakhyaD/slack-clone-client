@@ -149,6 +149,7 @@ export type Query = {
   channel: Channel;
   getMembers: Array<Member>;
   me?: Maybe<User>;
+  members: Array<User>;
   team: SingleTeam;
   teams: Array<Team>;
 };
@@ -156,6 +157,11 @@ export type Query = {
 
 export type QueryChannelArgs = {
   channelId: Scalars['Float'];
+  teamId: Scalars['Float'];
+};
+
+
+export type QueryMembersArgs = {
   teamId: Scalars['Float'];
 };
 
@@ -171,7 +177,7 @@ export type SingleTeam = {
   id: Scalars['Float'];
   name: Scalars['String'];
   ownerId: Scalars['Float'];
-  users?: Maybe<Array<Member>>;
+  users?: Maybe<Array<User>>;
 };
 
 export type Subscription = {
@@ -247,6 +253,13 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', access_token?: string | null | undefined, user?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined, errors?: Array<{ __typename?: 'ErrorField', field: string, message: string }> | null | undefined } };
 
+export type MembersQueryVariables = Exact<{
+  teamId: Scalars['Float'];
+}>;
+
+
+export type MembersQuery = { __typename?: 'Query', members: Array<{ __typename?: 'User', id: number, username: string, email: string, tokenVersion: number }> };
+
 export type RegisterMutationVariables = Exact<{
   options: AuthCredentials;
 }>;
@@ -280,7 +293,7 @@ export type TeamQueryVariables = Exact<{
 }>;
 
 
-export type TeamQuery = { __typename?: 'Query', team: { __typename?: 'SingleTeam', id: number, name: string, users?: Array<{ __typename?: 'Member', user?: { __typename?: 'User', id: number, username: string } | null | undefined }> | null | undefined, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined } };
+export type TeamQuery = { __typename?: 'Query', team: { __typename?: 'SingleTeam', id: number, name: string, channels?: Array<{ __typename?: 'Channel', id: number, name: string }> | null | undefined } };
 
 export type TeamsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -449,6 +462,44 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const MembersDocument = gql`
+    query Members($teamId: Float!) {
+  members(teamId: $teamId) {
+    id
+    username
+    email
+    tokenVersion
+  }
+}
+    `;
+
+/**
+ * __useMembersQuery__
+ *
+ * To run a query within a React component, call `useMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembersQuery({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useMembersQuery(baseOptions: Apollo.QueryHookOptions<MembersQuery, MembersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MembersQuery, MembersQueryVariables>(MembersDocument, options);
+      }
+export function useMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MembersQuery, MembersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MembersQuery, MembersQueryVariables>(MembersDocument, options);
+        }
+export type MembersQueryHookResult = ReturnType<typeof useMembersQuery>;
+export type MembersLazyQueryHookResult = ReturnType<typeof useMembersLazyQuery>;
+export type MembersQueryResult = Apollo.QueryResult<MembersQuery, MembersQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($options: AuthCredentials!) {
   register(options: $options) {
@@ -605,12 +656,6 @@ export const TeamDocument = gql`
   team(teamId: $teamId) {
     id
     name
-    users {
-      user {
-        id
-        username
-      }
-    }
     channels {
       id
       name

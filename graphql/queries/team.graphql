@@ -2,12 +2,6 @@ query Team($teamId: Float!) {
   team(teamId: $teamId) {
     id
     name
-    users {
-      user {
-        id
-        username
-      }
-    }
     channels {
       id
       name

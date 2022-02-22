@@ -2,7 +2,7 @@ query Channel($channelId: Float!, $teamId: Float!) {
   channel(channelId: $channelId, teamId: $teamId) {
     id
     name
-    messages(orderBy: { field: "createdAt", direction: ASC }) {
+    messages {
       id
       text
       createdAt

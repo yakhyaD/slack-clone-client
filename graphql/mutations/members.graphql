@@ -1,0 +1,8 @@
+query Members($teamId: Float!) {
+  members(teamId: $teamId) {
+    id
+    username
+    email
+    tokenVersion
+  }
+}

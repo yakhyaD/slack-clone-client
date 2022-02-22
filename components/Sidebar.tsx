@@ -3,13 +3,19 @@ import Link from "next/link";
 import AddChannelModal from './AddChannelModal';
 import AddMemberModal from './AddMemberModal';
 
-import { useMeQuery } from '../generated/graphql';
+import { useMembersQuery, useMeQuery } from '../generated/graphql';
 
 
 export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [openAddMemberModal, setOpenAddMemberModal] = useState(false);
 
+    const { data: members, loading: membersLoading } = useMembersQuery({
+        variables: {
+            teamId: parseInt(currentTeamId)
+        },
+        fetchPolicy: "network-only"
+    });
 
     const { data, loading } = useMeQuery({
         fetchPolicy: "network-only"
@@ -21,7 +27,6 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
         }
         return name.charAt(0).toUpperCase();
     }
-
     const currentTeam = !!currentTeamId && teams?.length > 1 ? teams.find(team => team.id === parseInt(currentTeamId)) : teams[0];
 
     return (
@@ -60,7 +65,7 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                         {currentTeam.channels && currentTeam.channels.map((channel) => (
                             <Link key={channel.id} href={`/view-team/${currentTeam.id}/${channel.id}`}>
                                 <a className={`pb-4 text-sm  hover:underline hover: text-white
-                                    ${channel.id === parseInt(currentChannelId) ? "font-bold" : "font-light"}`}
+                                    ${currentChannelId && channel.id === parseInt(currentChannelId) ? "font-bold" : "font-light"}`}
                                 >
                                     # {channel.name}
                                 </a>
@@ -74,6 +79,23 @@ export const Sidebar = ({ teams, currentTeamId, currentChannelId }) => {
                             Invite People
                         </button>
                     }
+                    <div className="flex flex-col py-4">
+                        <div className="text-xl text-black font-bold">Direct messages:</div>
+                        <ul>
+                            {!membersLoading && members?.members.map((member) => (
+                                <li key={member.id} className="flex justify-between">
+                                    <div className="flex align-center pt-3">
+                                        <span className="w-2 h-2 m-auto rounded-full bg-green"></span>
+                                        <Link href={`/view-team/${currentTeamId}/user/${member.id}`}>
+                                            <a className="text-sm font-light text-center ml-2 hover:underline">
+                                                {member.username}
+                                            </a>
+                                        </Link>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
                 </div>
             </div>
